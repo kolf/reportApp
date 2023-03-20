@@ -15,6 +15,7 @@ import { CoverItem, CoverList } from "./CoverList";
 import { FormErrorMessage } from "./FormErrorMessage";
 import { Loading } from "./Loading";
 import { MapPanel } from './MapPanel'
+import { TaskItem } from './TaskItem'
 import { ImagePicker } from './ImagePicker'
 import { Picker } from "./Picker";
 import { Error } from "./Error";
@@ -22,6 +23,7 @@ import { Empty } from "./Empty";
 import { CountDown } from './CountDown'
 import { LoadingModal } from "./LoadingModal";
 import { PickerModal } from './PickerModal'
+import { Card } from './Card'
 
 export {
   View,
@@ -40,5 +42,7 @@ export {
   FormList,
   FormItem,
   DateRange,
+  TaskItem,
+  Card,
   CoverItem, CoverList, MapPanel, Picker, ImagePicker, TableView, Empty, Error, LoadingModal, PickerModal
 };

@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: Colors.border,
+    color: '#666',
     width: '100%',
     padding: 6,
     textAlign: 'center'

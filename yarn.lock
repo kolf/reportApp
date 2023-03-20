@@ -6267,9 +6267,9 @@ react-native-text-size@4.0.0-rc.1:
   integrity sha512-CysqjU2jK6Yc+a+kEI222pUyTY2ywcU2HqbFqf1KHymW6OPTdvBBHqbEJKL0QiLhQaFYDbqicM+h990s9TP00g==
 
 react-native-ui-lib@^7.2.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-ui-lib/-/react-native-ui-lib-7.2.0.tgz#22948fa8d800d8256ae017fb0f8ef6b56b000f3a"
-  integrity sha512-n5aT0EPiiIDSEcZl3M2GJW4/OBdU36aefPQigqTYELDv+nDCEGtM0EF6lN9KeKxeZv+CWLE9h5nWGozSvrr9qw==
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-ui-lib/-/react-native-ui-lib-7.2.1.tgz#cd4a8ae00cd1ee01f665b01ef4d2cd77eafb9158"
+  integrity sha512-rai3ouxMqt5qM114EVBPeeA/7p3fC/4j3/AUzYKvzyA0fB/cguiUP+aNTgQVCdLmUL4cJ2INs+wy6WueP2HFoA==
   dependencies:
     babel-plugin-transform-inline-environment-variables "^0.0.2"
     color "^3.1.0"

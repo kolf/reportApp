@@ -52,7 +52,7 @@ const makeQuery = values => {
   }, {});
 };
 
-export const AllListScreen = React.memo(({navigation}) => {
+export const PatrolRecordScreen = React.memo(({navigation}) => {
   const [query, setQuery] = React.useState({
     // district: '',
     // bugId: '',

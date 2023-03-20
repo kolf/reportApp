@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text } from 'react-native-ui-lib'
 
 
 //获取当前日期，格式YYYY-MM-DD

@@ -6,7 +6,7 @@ import * as RNImagePicker from 'react-native-image-picker';
 import { PickerModal } from './PickerModal'
 import { Icon } from './Icon';
 import { Colors } from '../config'
-// import { uploadItem } from '../lib/upload'
+import { uploadItem } from '../lib/upload'
 
 const imageWidth = (Dimensions.get('window').width - 24) / 3
 const gap = 6;
@@ -44,20 +44,15 @@ export const ImagePicker = ({ files, showAddBtn, onChange }) => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
+        maxWidth: 1000,
+        maxHeight: 1000,
       })
 
 
       if (!res.didCancel) {
         let url = res.assets[0].uri;
-        let httpUrl = ''
-        // try {
-        //   const uploadRes = await uploadItem({ url });
-        //   httpUrl = uploadRes.httpUrl
-        // } catch (error) {
-
-        // }
-
-        const nextImageList = [...imageList, { url, httpUrl }];
+        const nextImageList = [...imageList, { url }];
+        updateHttpUrl(nextImageList, url)
         setImageList(nextImageList)
         onChange && onChange(nextImageList)
       }
@@ -80,18 +75,14 @@ export const ImagePicker = ({ files, showAddBtn, onChange }) => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
+        maxWidth: 1000,
+        maxHeight: 1000,
       });
 
       if (!res.didCancel) {
         let url = res.assets[0].uri;
-        let httpUrl = ''
-        // try {
-        //   const uploadRes = await uploadItem({ url });
-        //   httpUrl = uploadRes.httpUrl
-        // } catch (error) {
-
-        // }
-        const nextImageList = [...imageList, { url, httpUrl }];
+        const nextImageList = [...imageList, { url }];
+        updateHttpUrl(nextImageList, url)
         setImageList(nextImageList)
         onChange && onChange(nextImageList)
       }
@@ -99,6 +90,26 @@ export const ImagePicker = ({ files, showAddBtn, onChange }) => {
       // console.log(error, 'error')
     }
     clicked.current = false
+  }
+
+  const updateHttpUrl = async (imageList, url) => {
+    try {
+      const uploadRes = await uploadItem({ url });
+      const httpUrl = uploadRes.httpUrl;
+      const nextImageList = imageList.map(image => {
+        if (!image.httpUrl && image.url === url) {
+          return {
+            ...image,
+            httpUrl
+          }
+        }
+        return image
+      })
+      setImageList(nextImageList)
+      onChange && onChange(nextImageList)
+    } catch (error) {
+
+    }
   }
 
   return <View style={styles.root} paddingH-12>

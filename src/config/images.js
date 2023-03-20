@@ -10,17 +10,23 @@ export const Images = {
 };
 
 export const Icons = {
-  tab1: require('../assets/tab1.png'),
   exit: require('../assets/exit.png'),
+  tab1: require('../assets/tab1.png'),
   tab1Active: require('../assets/tab1_active.png'),
-  tab2: require('../assets/tab3.png'),
-  tab2Active: require('../assets/tab3_active.png'),
-  tab3: require('../assets/tab2.png'),
-  tab3Active: require('../assets/tab2_active.png'),
+  tab3: require('../assets/tab3.png'),
+  tab3Active: require('../assets/tab3_active.png'),
+  tab4: require('../assets/tab2.png'),
+  tab4Active: require('../assets/tab2_active.png'),
+  tab2: require('../assets/tab4.png'),
+  tab2Active: require('../assets/tab4_active.png'),
   add: require('../assets/add.png'),
   menu: require('../assets/list.png'),
   download: require('../assets/download.png'),
   coverage: require('../assets/coverage.png'),
   insert: require('../assets/insert.png'),
   backme: require('../assets/backme.png'),
+  group1: require('../assets/group1.png'),
+  group2: require('../assets/group2.png'),
+  group3: require('../assets/group3.png'),
+  group4: require('../assets/group4.png'),
 }

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {SWRConfig} from 'swr';
-import {AppState, StatusBar, Platform} from 'react-native';
+import {AppState, StatusBar} from 'react-native';
 import {AMapSdk} from 'react-native-amap3d';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootNavigator} from './navigation/RootNavigator';
-import {Colors, Typography, Assets} from 'react-native-ui-lib';
+import {Colors, Typography, Assets, ThemeManager} from 'react-native-ui-lib';
 import {AuthenticatedUserProvider} from './providers';
 import {
   Colors as colors,
@@ -14,6 +14,9 @@ import {
   Icons as icons,
 } from './config';
 
+ThemeManager.setComponentTheme('Text', {
+  color: '#666',
+});
 Colors.loadColors(colors);
 Assets.loadAssetsGroup('images', images);
 Assets.loadAssetsGroup('icons', icons);
