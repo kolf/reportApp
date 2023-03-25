@@ -2,11 +2,7 @@ import * as React from 'react';
 import {View, StyleSheet} from 'react-native';
 
 import {InlineForm, DateRange, TableView, Picker} from '../components';
-import {
-  useDistrict,
-  useBugCategory,
-  useInfiniteTemplate,
-} from '../hooks/useData';
+import {useDistrict, useBugCategory, useInspectionList} from '../hooks/useData';
 
 const columns = [
   {
@@ -60,7 +56,7 @@ export const PatrolRecordScreen = React.memo(({navigation}) => {
     // endMonitorTime: ''
   });
 
-  const {data, setSize, size, isRefreshing, onRefresh} = useInfiniteTemplate(
+  const {data, setSize, size, isRefreshing, onRefresh} = useInspectionList(
     makeQuery(query),
   );
   const {data: districtRange = []} = useDistrict();

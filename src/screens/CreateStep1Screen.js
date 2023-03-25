@@ -84,8 +84,8 @@ export const CreateStep1Screen = React.memo(({route, navigation}) => {
       itemId: templateData?.itemId,
       deviceId: params.deviceId,
       templateId: params.templateId,
-      weather: weatherData?.text,
-      temperature: weatherData?.temp,
+      weather: weatherData?.weather,
+      temperature: weatherData?.temperature,
       _district: positionData?.district,
     };
     if (currentUserTemplate.id) {
@@ -164,10 +164,10 @@ export const CreateStep1Screen = React.memo(({route, navigation}) => {
           )}
         </FormItem>
         <FormItem label="天气">
-          <Text text16>{weatherData?.text}</Text>
+          <Text text16>{weatherData?.weather}</Text>
         </FormItem>
         <FormItem label="温度">
-          <Text text16>{weatherData?.temp || 0}℃</Text>
+          <Text text16>{weatherData?.temperature || 0}℃</Text>
         </FormItem>
         <FormItem label="监测时间">
           <CountDown onChange={recordTimeChange} />

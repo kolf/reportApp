@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   StyleSheet,
-  StatusBar,
   TouchableOpacity,
   PermissionsAndroid,
   Platform,
@@ -128,7 +127,7 @@ export const MapScreen = React.memo(({navigation}) => {
     if (userTemplateLoading) {
       run();
     }
-    // run()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userTemplateLoading]);
 
   React.useEffect(() => {
@@ -198,6 +197,7 @@ export const MapScreen = React.memo(({navigation}) => {
         1000,
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data.positions, mapViewRef],
   );
 
@@ -319,12 +319,12 @@ export const MapScreen = React.memo(({navigation}) => {
           />
           <FloatButton
             style={{marginTop: 8}}
-            icon="animation-outline"
+            icon="blender-outline"
             onPress={() => setCoverage(!coverage)}
           />
           <FloatButton
             style={{marginTop: 8}}
-            icon="crosshairs-gps"
+            icon="bathtub"
             onPress={() => {
               updateCurrentPosition(position => {
                 const target = position || currentPosition;
@@ -366,10 +366,7 @@ export const MapScreen = React.memo(({navigation}) => {
           }}>
           {currentPosition && (
             <Marker position={currentPosition}>
-              <Icon
-                size={30}
-                color={Colors.primary}
-                name="map-marker-radius"></Icon>
+              <Icon size={30} color={Colors.primary} name="map-marker-radius" />
             </Marker>
           )}
           {markerList.length > 0 && (
@@ -407,6 +404,9 @@ export const MapScreen = React.memo(({navigation}) => {
         }}
       />
       <LoadingModal loading={mapLoading} size={80} color={Colors.success} />
+      <View>
+        <Icon size={30} color={Colors.primary} name="map-marker-radius" />
+      </View>
     </View>
   );
 });

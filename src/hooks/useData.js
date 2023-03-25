@@ -69,7 +69,6 @@ export const useAllPosition = () => {
       itemId,
       typeId,
     },
-    {},
   );
 
   return {data, error, loading, refresh};
@@ -123,7 +122,6 @@ export const useAllTemplate = () => {
   const {data, error, loading, refresh} = useRequest(
     '/api/bjtzh/pest/template/listTemplateVO/' + itemId,
     null,
-    {},
   );
 
   return {data, error, loading, refresh};
@@ -197,10 +195,6 @@ export const useUserTemplateList = () => {
       let res = null;
       try {
         const imageList = await uploadList(data._fileList || []);
-        console.log(
-          _makeData({...data, imageList}),
-          '_makeData({ ...data, imageList })',
-        );
         res = await getFetcher(
           `/api/bjtzh/pest/fixed/point/saveFixedPointRecord`,
           'POST',
@@ -334,7 +328,6 @@ export const useDetails = id => {
   return useRequest(
     `/api/bjtzh/pest/fixed/point/getDetailRecordBy/${id}`,
     null,
-    {},
   );
 };
 
@@ -342,7 +335,6 @@ export const usePosition = id => {
   return useRequest(
     `/api/bjtzh/pest/point/position/getPointInfoBy/${id}`,
     null,
-    {},
   );
 };
 
@@ -350,7 +342,6 @@ export const useTemplateFixedPoint = () => {
   return useRequest(
     `/api/bjtzh/pest/device/template/templateFixedPointDetailInfo`,
     {itemId},
-    {},
   );
 };
 
@@ -373,8 +364,8 @@ export const useTemplate = id => {
 };
 
 export const useWeather = () => {
-  return useRequest(`/api/dreamdeck/weather/heweather/now`, {
-    location: '101010600',
+  return useRequest(`/api/bjtzh/ddtzg5Amini/banner/weather`, {
+    city: 'tongzhou-101010600',
   });
 };
 
@@ -461,4 +452,29 @@ export const useLogin = () => {
     });
   };
   return {getUser, getToken};
+};
+
+// const getInspectionList = () => {
+//   return getFetcher('/api/bjtzh/pest/bug/inspection', 'GET');
+// };
+
+export const useInspectionList = params => {
+  return useRequest(
+    `https://zhyl.zwyun.bjtzh.gov.cn/pest/bug/inspection`,
+    params,
+    {
+      formatData(res) {
+        console.log(res, 'res');
+        return res;
+      },
+    },
+  );
+};
+
+const mutateInspection = async params => {
+  const res = await getFetcher(
+    `https://zhyl.zwyun.bjtzh.gov.cn/pest/bug/inspection`,
+    'POST',
+    {id: itemId, ...params},
+  );
 };
