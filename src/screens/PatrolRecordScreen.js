@@ -11,8 +11,8 @@ const columns = [
     width: 48,
   },
   {
-    title: '监测点名称',
-    dataIndex: 'name',
+    title: '属地',
+    dataIndex: 'territorial',
   },
   {
     title: '监测虫害',
@@ -20,7 +20,7 @@ const columns = [
   },
   {
     title: '监测时间',
-    dataIndex: 'recordTime',
+    dataIndex: 'updateTime',
   },
 ];
 
@@ -62,22 +62,22 @@ export const PatrolRecordScreen = React.memo(({navigation}) => {
   const {data: districtRange = []} = useDistrict();
   const {data: bugCategoryRange = []} = useBugCategory();
 
-  const makeData = React.useMemo(() => {
+  const memoData = React.useMemo(() => {
     if (!data) {
       return [];
     }
+
     return data.map((item, index) => {
       return {
         ...item,
-        key:
-          item.id + '-' + item.deviceId + '-' + item.templateId + '-' + index,
+        key: item.id + '-' + index,
         index: index + 1,
       };
     });
   }, [data]);
 
   const handleClick = ({id, deviceId}) => {
-    navigation.navigate('Details', {
+    navigation.navigate('PatrolRecordDetails', {
       deviceId,
       id,
     });
@@ -115,7 +115,7 @@ export const PatrolRecordScreen = React.memo(({navigation}) => {
         }}
         showDot
         columns={columns}
-        dataSource={makeData}
+        dataSource={memoData}
         onClick={handleClick}
       />
     </View>

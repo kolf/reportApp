@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     marginTop: -1,
     marginLeft: 12,
+    paddingRight: 12,
   },
   dot: {
     width: 8,

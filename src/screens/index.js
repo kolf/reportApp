@@ -9,3 +9,6 @@ export {TaskCategoryScreen} from './TaskCategoryScreen';
 export {TaskListScreen} from './TaskListScreen';
 export {TaskDetailsScreen} from './TaskDetailsScreen';
 export {PatrolRecordScreen} from './PatrolRecordScreen';
+export {CreatePatrolRecord} from './CreatePatrolRecord';
+export {PatrolRecordDetails} from './PatrolRecordDetails';
+export {MapPlaceSearch} from './MapPlaceSearch';

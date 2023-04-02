@@ -2,11 +2,6 @@ export const Images = {
   login: require('../assets/login.png'),
   empty: require('../assets/empty.png'),
   error: require('../assets/error.png'),
-  fangchong1: require('../assets/fangchong1.png'),
-  fangchong2: require('../assets/fangchong2.png'),
-  swiper8: require('../assets/swiper8.png'),
-  swiper9: require('../assets/swiper9.png'),
-  swiper10: require('../assets/swiper10.png'),
 };
 
 export const Icons = {
@@ -29,4 +24,13 @@ export const Icons = {
   group2: require('../assets/group2.png'),
   group3: require('../assets/group3.png'),
   group4: require('../assets/group4.png'),
-}
+  list: require('../assets/list.png'),
+  findMe: require('../assets/findme.png'),
+  edit: require('../assets/edit.png'),
+  user: require('../assets/user.png'),
+  password: require('../assets/password.png'),
+  eye: require('../assets/eye.png'),
+  'eye-off': require('../assets/eye-off.png'),
+  address: require('../assets/address.png'),
+  close: require('../assets/close.png'),
+};

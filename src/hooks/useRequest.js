@@ -2,7 +2,7 @@
  * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
  * @Date: 2022-04-17 09:41:04
  * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-03-19 12:48:11
+ * @LastEditTime: 2023-04-01 15:38:37
  * @FilePath: /reportApp/src/hooks/useRequest.js
  * @Description:
  */
@@ -14,6 +14,8 @@ import {API_ROOT} from '../config/apis';
 
 export const getFetcher = async (url, method = 'GET', data, headers) => {
   const apiRootKey = (url.match(/(\/api\/\w+)\//) || [])[1];
+
+  // console.log(url, data, 'data');
 
   try {
     const token = await AsyncStorage.getItem('@token');
@@ -33,7 +35,7 @@ export const getFetcher = async (url, method = 'GET', data, headers) => {
     if (resData.code !== 0) {
       throw new Error(resData.msg);
     }
-    return Promise.resolve(resData.data);
+    return resData.data;
   } catch (error) {
     console.error(error, url, JSON.stringify(data), 'error');
     return Promise.reject(error);
@@ -45,6 +47,8 @@ export const useRequest = (name, args, options = {}) => {
     args && Object.keys(args).length > 0
       ? `${name}?${queryString.stringify(args)}`
       : name;
+
+  console.log(url, 'url');
 
   const {data, error, mutate, isValidating} = useSWR(
     name ? url : null,

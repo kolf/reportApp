@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
 export const useTogglePasswordVisibility = () => {
   // password will not be initially visible
@@ -36,6 +36,6 @@ export const useTogglePasswordVisibility = () => {
     rightIcon,
     confirmPasswordVisibility,
     handleConfirmPasswordVisibility,
-    confirmPasswordIcon
+    confirmPasswordIcon,
   };
 };

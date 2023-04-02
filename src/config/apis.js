@@ -4,7 +4,7 @@
  * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
  * @LastEditTime: 2023-03-20 22:58:55
  * @FilePath: /reportApp/src/config/apis.js
- * @Description: 
+ * @Description:
  */
 // export const API_ROOT = {
 //   "/api/dreamdeck": "https://test.dreamdeck.cn:10443",
@@ -20,6 +20,7 @@ export const API_ROOT = {
   '/api/dreamdeck': 'https://www.dreamdeck.cn:10443',
   '/api/bjtzh': 'https://zhyl.zwyun.bjtzh.gov.cn',
   '/api/qpic': 'https://mapstyle.qpic.cn',
+  '/api/amap': '//restapi.amap.com/v3/place/text',
 };
 export const itemId = 10001;
 export const typeId = 8202;

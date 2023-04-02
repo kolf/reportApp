@@ -5,18 +5,22 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native';
-import useSWR, {useSWRConfig} from 'swr';
+import {useSWRConfig} from 'swr';
 import {MapView, Marker, MapType, Cluster} from 'react-native-amap3d';
 import {init, Geolocation} from 'react-native-amap-geolocation';
 import {
   View,
-  Incubator,
-  Button,
   Text,
   ActionSheet,
   Image,
+  Icon as UIcon,
 } from 'react-native-ui-lib';
-import {Sidebar, Icon, LoadingModal} from '../components';
+import {
+  Sidebar,
+  LoadingModal,
+  Button as MyButton,
+  SearchBar,
+} from '../components';
 import {Colors} from '../config';
 import {
   useTemplateFixedPoint,
@@ -59,7 +63,7 @@ const FloatButton = ({icon, style, total, onPress}) => {
         width={40}
         height={40}
         center>
-        <Icon name={icon} size={24} />
+        <UIcon assetName={icon} assetGroup="icons" size={24} />
       </View>
       {total && total !== undefined && (
         <View absT center style={styles.total}>
@@ -70,32 +74,9 @@ const FloatButton = ({icon, style, total, onPress}) => {
   );
 };
 
-const SearchBar = ({onSearch}) => {
-  const [value, setValue] = React.useState('');
-  return (
-    <View absT style={{zIndex: 100, width: '100%'}}>
-      <Incubator.TextField
-        onChangeText={setValue}
-        value={value}
-        validate={['required']}
-        containerStyle={styles.input}
-        fieldStyle={styles.fieldStyle}
-        placeholder="请输入监测点位名称"
-        trailingAccessory={
-          <Button
-            backgroundColor={Colors.success}
-            borderRadius={0}
-            label="搜索"
-            onPress={() => onSearch(value)}
-          />
-        }
-      />
-    </View>
-  );
-};
 export const MapScreen = React.memo(({navigation}) => {
   const {mutate} = useSWRConfig();
-  const mapViewRef = React.useRef(null);
+  const mapRef = React.useRef(null);
   const statusRef = React.useRef(null);
   const clusterRef = React.useRef(null);
   const [mapLoading, setMapLoading] = React.useState(true);
@@ -132,7 +113,7 @@ export const MapScreen = React.memo(({navigation}) => {
 
   React.useEffect(() => {
     if (data.positions && data.positions.length > 0) {
-      mapViewRef.current?.moveCamera(
+      mapRef.current?.moveCamera(
         {zoom: 11, target: {latitude: 39.80884722, longitude: 116.7749056}},
         500,
       );
@@ -178,16 +159,12 @@ export const MapScreen = React.memo(({navigation}) => {
 
   const handleSearch = React.useCallback(
     value => {
-      if (
-        !data ||
-        data.positions?.length === 0 ||
-        !value ||
-        !mapViewRef.current
-      ) {
+      // console.log(data, 'value');
+      if (!data || data.positions?.length === 0 || !value || !mapRef.current) {
         return;
       }
       const position = getMakerPosition(data.positions, value);
-      mapViewRef.current.moveCamera(
+      mapRef.current.moveCamera(
         {
           tilt: 0,
           bearing: 0,
@@ -198,8 +175,12 @@ export const MapScreen = React.memo(({navigation}) => {
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data.positions, mapViewRef],
+    [data.positions, mapRef],
   );
+
+  const createEvent = () => {
+    navigation.navigate('CreatePatrolRecord');
+  };
 
   const mekeTemplateFixedPointList = React.useMemo(() => {
     if (!templateFixedPointList) {
@@ -220,6 +201,7 @@ export const MapScreen = React.memo(({navigation}) => {
       }
       return {...item, id};
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateFixedPointList]);
 
   const unTotal = React.useMemo(() => {
@@ -270,6 +252,7 @@ export const MapScreen = React.memo(({navigation}) => {
         },
       })),
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMarker]);
 
   const getMaker = React.useCallback(
@@ -298,6 +281,7 @@ export const MapScreen = React.memo(({navigation}) => {
         },
       };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.positions]);
 
   return (
@@ -308,27 +292,34 @@ export const MapScreen = React.memo(({navigation}) => {
         open={showMenu}
         dataSource={mekeTemplateFixedPointList}
         onOpenChange={setShowMenu}>
-        <SearchBar onSearch={handleSearch} />
+        <View absT style={{zIndex: 100, left: 12, top: 12, right: 12}}>
+          <SearchBar onSearch={handleSearch} placeholder="请输入监测点位名称" />
+        </View>
+        <View abs style={styles.createBtn}>
+          <MyButton onPress={createEvent}>
+            <UIcon size={35} assetName="edit" assetGroup="icons" />
+          </MyButton>
+        </View>
         <View absR style={styles.btnGroup}>
           <FloatButton
             total={unTotal}
-            icon="menu"
+            icon="list"
             onPress={() => {
               setShowMenu(true);
             }}
           />
           <FloatButton
             style={{marginTop: 8}}
-            icon="blender-outline"
+            icon="coverage"
             onPress={() => setCoverage(!coverage)}
           />
           <FloatButton
             style={{marginTop: 8}}
-            icon="bathtub"
+            icon="findMe"
             onPress={() => {
               updateCurrentPosition(position => {
                 const target = position || currentPosition;
-                mapViewRef.current.moveCamera(
+                mapRef.current.moveCamera(
                   {
                     tilt: 0,
                     bearing: 0,
@@ -347,9 +338,7 @@ export const MapScreen = React.memo(({navigation}) => {
           scaleControlsEnabled={false}
           distanceFilter={10}
           headingFilter={90}
-          // myLocationEnabled
-          // myLocationButtonEnabled
-          ref={mapViewRef}
+          ref={mapRef}
           onCameraIdle={({nativeEvent}) => {
             if (clusterRef.current) {
               statusRef.current = nativeEvent;
@@ -366,14 +355,14 @@ export const MapScreen = React.memo(({navigation}) => {
           }}>
           {currentPosition && (
             <Marker position={currentPosition}>
-              <Icon size={30} color={Colors.primary} name="map-marker-radius" />
+              <UIcon size={30} assetGroup="icons" assetName="address" />
             </Marker>
           )}
           {markerList.length > 0 && (
             <Cluster
               ref={clusterRef}
               onPress={({position}) => {
-                mapViewRef.current?.moveCamera(
+                mapRef.current?.moveCamera(
                   {
                     target: position,
                     zoom: statusRef.current?.cameraPosition.zoom + 1,
@@ -404,9 +393,6 @@ export const MapScreen = React.memo(({navigation}) => {
         }}
       />
       <LoadingModal loading={mapLoading} size={80} color={Colors.success} />
-      <View>
-        <Icon size={30} color={Colors.primary} name="map-marker-radius" />
-      </View>
     </View>
   );
 });
@@ -443,5 +429,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     fontSize: 10,
     borderRadius: 4,
+  },
+  createBtn: {
+    bottom: 32,
+    right: 12,
+    backgroundColor: Colors.primary,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    paddingLeft: 12,
+    paddingTop: 12,
+    zIndex: 100,
   },
 });

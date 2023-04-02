@@ -1,4 +1,3 @@
-
 export const Colors = {
   primary: '#13ce66',
   error: '#ff2442',
@@ -11,9 +10,10 @@ export const Colors = {
 
 export const Typography = {
   h4: {
-    fontSize: 18, lineHeight: 18
+    fontSize: 18,
+    lineHeight: 18,
   },
   primary: {
-    backgroundColor: Colors.success
-  }
-}
+    backgroundColor: Colors.success,
+  },
+};

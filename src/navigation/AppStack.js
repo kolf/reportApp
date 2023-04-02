@@ -7,7 +7,7 @@ import {View, Image} from 'react-native-ui-lib';
 import {AuthenticatedUserContext} from '../providers';
 import {
   MapScreen,
-  AllListScreen,
+  CreatePatrolRecord,
   MyListScreen,
   CreateStep1Screen,
   CreateStep2Screen,
@@ -16,6 +16,8 @@ import {
   TaskListScreen,
   TaskDetailsScreen,
   PatrolRecordScreen,
+  PatrolRecordDetails,
+  MapPlaceSearch,
 } from '../screens';
 
 import {Icons} from '../config/images';
@@ -144,6 +146,21 @@ export const AppStack = () => {
         name="TaskDetails"
         options={{title: '任务详情', headerTitleAlign: 'center'}}
         component={TaskDetailsScreen}
+      />
+      <Stack.Screen
+        name="PatrolRecordDetails"
+        options={{title: '巡查详情', headerTitleAlign: 'center'}}
+        component={PatrolRecordDetails}
+      />
+      <Stack.Screen
+        name="CreatePatrolRecord"
+        options={{title: '巡查上报', headerTitleAlign: 'center'}}
+        component={CreatePatrolRecord}
+      />
+      <Stack.Screen
+        name="MapPlaceSearch"
+        options={{title: '选择位置', headerTitleAlign: 'center'}}
+        component={MapPlaceSearch}
       />
     </Stack.Navigator>
   );

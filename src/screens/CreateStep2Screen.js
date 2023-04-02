@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, ScrollView, Alert, BackHandler} from 'react-native';
+import {StyleSheet, ScrollView, Alert} from 'react-native';
 import {View, Text, Button, Incubator} from 'react-native-ui-lib';
 import {Steps, LoadingModal, TableForm, ImagePicker} from '../components';
 import {AuthenticatedUserContext} from '../providers';

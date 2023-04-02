@@ -1,13 +1,13 @@
 import React from 'react';
-import { View as RNView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {View as RNView, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-export const View = ({ isSafe, style, children }) => {
+export const View = ({isSafe, style, children}) => {
   const insets = useSafeAreaInsets();
 
   if (isSafe) {
     return (
-      <RNView style={{ paddingTop: insets.top, ...style }}>{children}</RNView>
+      <RNView style={{paddingTop: insets.top, ...style}}>{children}</RNView>
     );
   }
 

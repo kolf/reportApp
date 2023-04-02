@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 import useSWR, {useSWRConfig} from 'swr';
+import axios from 'axios';
 import useSWRInfinite from 'swr/infinite';
 import queryString from 'query-string';
 import {itemId, typeId} from '../config/apis';
@@ -371,8 +372,8 @@ export const useWeather = () => {
 
 export const useDistrict = () => {
   return useRequest(
-    `/api/bjtzh/pest/point/position/listDistrict/${itemId}/${typeId}`,
-    null,
+    `/api/bjtzh/pest/point/position/listDistrict`,
+    {itemId, typeId},
     {
       formatData(res) {
         return res?.map(item => ({label: item, value: item}));
@@ -454,27 +455,114 @@ export const useLogin = () => {
   return {getUser, getToken};
 };
 
-// const getInspectionList = () => {
-//   return getFetcher('/api/bjtzh/pest/bug/inspection', 'GET');
-// };
-
 export const useInspectionList = params => {
-  return useRequest(
-    `https://zhyl.zwyun.bjtzh.gov.cn/pest/bug/inspection`,
-    params,
-    {
-      formatData(res) {
-        console.log(res, 'res');
-        return res;
-      },
+  const PAGE_SIZE = 16;
+  const {data, error, mutate, size, setSize, isValidating} = useSWRInfinite(
+    index =>
+      `/api/bjtzh/pest/bug/inspection/page?itemId=${itemId}&size=${PAGE_SIZE}&pages=${
+        index + 1
+      }${
+        Object.values(params).length > 0
+          ? '&' + queryString.stringify(params)
+          : ''
+      }`,
+    async url => {
+      const res = await getFetcher(url);
+      console.log(res.records, 'res');
+      // mutate([])
+      return res.records || [];
     },
   );
+
+  const issues = (data || []).reduce((result, item) => {
+    if (item.id && !result.find(r => r.id === item.id)) {
+      result.push({...item});
+    }
+    return result;
+  }, []);
+  const isLoading = !data && !error;
+  const isRefreshing = !!(isValidating && data && issues.length === size);
+
+  console.log(issues, data.length, size, 'size');
+
+  return {
+    data: issues,
+    onRefresh: mutate,
+    isLoading,
+    isValidating,
+    isRefreshing,
+    size,
+    setSize,
+  };
 };
 
-const mutateInspection = async params => {
-  const res = await getFetcher(
-    `https://zhyl.zwyun.bjtzh.gov.cn/pest/bug/inspection`,
-    'POST',
-    {id: itemId, ...params},
-  );
+export const useInspection = params => {
+  return useRequest(`/api/bjtzh/pest/bug/inspection/${params.id}`, null);
+};
+
+export const updateInspection = data => {
+  return getFetcher(`/api/bjtzh/pest/bug/inspection`, 'POST', data);
+};
+
+export const usePlaceSearch = value => {
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!value) {
+      return;
+    }
+
+    const run = async keywords => {
+      setLoading(true);
+      try {
+        const res = await axios({
+          url: `https://restapi.amap.com/v3/assistant/inputtips?key=ce54fb644202f44e97271b291b074a20&keywords=${keywords}&types=&city=北京&children=1&offset=10&page=1&extensions=base`,
+          method: 'GET',
+        });
+        setData(
+          (res.data.tips || []).filter(
+            item => typeof item.address === 'string' && item.address,
+          ),
+        );
+      } catch (error) {
+        console.error(error, 'error');
+      }
+      setLoading(false);
+    };
+
+    run(value);
+  }, [value]);
+
+  return {data, loading};
+};
+
+export const useInspectionTemplate = () => {
+  const {data, mutate} = useSWR(`inspectionTemplate`, async () => {
+    try {
+      const res = await AsyncStorage.getItem('inspectionTemplate');
+      return res ? JSON.parse(res) : {};
+    } catch (error) {
+      return {};
+    }
+  });
+  const update = async data => {
+    try {
+      await AsyncStorage.setItem('inspectionTemplate', JSON.stringify(data));
+      mutate();
+    } catch (error) {}
+  };
+
+  const remove = async () => {
+    try {
+      await AsyncStorage.removeItem('inspectionTemplate');
+      mutate();
+    } catch (error) {}
+  };
+
+  return {
+    data,
+    update,
+    remove,
+  };
 };

@@ -17,10 +17,10 @@ import {useTogglePasswordVisibility} from '../hooks';
 import {useLogin} from '../hooks/useData';
 import {loginValidationSchema} from '../utils';
 
-export const LoginScreen = React.memo(({navigation}) => {
+export const LoginScreen = React.memo(() => {
   const {setUser, setToken} = React.useContext(AuthenticatedUserContext);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
-  const {getToken, getUser} = useLogin();
+  const {getToken} = useLogin();
   const {passwordVisibility, handlePasswordVisibility, rightIcon} =
     useTogglePasswordVisibility();
 
@@ -78,7 +78,7 @@ export const LoginScreen = React.memo(({navigation}) => {
               <>
                 <TextInput
                   name="username"
-                  leftIconName="walk"
+                  leftIconName="user"
                   placeholder="输入用户名"
                   autoCapitalize="none"
                   textContentType="name"
@@ -93,7 +93,7 @@ export const LoginScreen = React.memo(({navigation}) => {
                 />
                 <TextInput
                   name="password"
-                  leftIconName="key-variant"
+                  leftIconName="password"
                   placeholder="输入密码"
                   autoCapitalize="none"
                   autoCorrect={false}
