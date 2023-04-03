@@ -20,7 +20,7 @@ import {Colors} from '../config';
 
 export const CreatePatrolRecord = React.memo(({route, navigation}) => {
   const {auth} = React.useContext(AuthenticatedUserContext);
-  const {update, data: inspectionTemplate} = useInspectionTemplate();
+  const {update, data: inspectionTemplate, remove} = useInspectionTemplate();
   const {data: bugCategoryRange = []} = useBugCategory();
   const {data: districtRange = []} = useDistrict();
   const recordTimeRef = React.useRef(null);
@@ -29,12 +29,16 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
   });
   const [confirmLoading, setConfirmLoading] = React.useState(false);
 
-  console.log(inspectionTemplate, 'inspectionTemplate');
-
-  const [longitude, latitude] =
-    inspectionTemplate && inspectionTemplate._address?.location.split(',');
-
   const makeParams = data => {
+    if (!data) {
+      return {};
+    }
+    const [longitude, latitude] =
+      (inspectionTemplate &&
+        inspectionTemplate._address &&
+        inspectionTemplate._address.location.split(',')) ||
+      [];
+
     return {
       ...data,
       longitude,
@@ -54,6 +58,7 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
     try {
       await auth();
       const res = updateInspection(makeParams(formData));
+      await remove();
     } catch (error) {
       Alert.alert(
         `提交失败`,
@@ -116,7 +121,7 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
           <TouchableOpacity
             onPress={handleAddress}
             style={{paddingVertical: 12, paddingRight: 12}}>
-            {inspectionTemplate._address ? (
+            {inspectionTemplate && inspectionTemplate._address ? (
               <Text>{inspectionTemplate._address.fullAddress}</Text>
             ) : (
               <Text color="#ccc">请选择</Text>

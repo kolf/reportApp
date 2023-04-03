@@ -457,6 +457,7 @@ export const useLogin = () => {
 
 export const useInspectionList = params => {
   const PAGE_SIZE = 16;
+  console.log(params, 'params');
   const {data, error, mutate, size, setSize, isValidating} = useSWRInfinite(
     index =>
       `/api/bjtzh/pest/bug/inspection/page?itemId=${itemId}&size=${PAGE_SIZE}&pages=${
@@ -474,16 +475,18 @@ export const useInspectionList = params => {
     },
   );
 
-  const issues = (data || []).reduce((result, item) => {
-    if (item.id && !result.find(r => r.id === item.id)) {
-      result.push({...item});
-    }
-    return result;
-  }, []);
+  const issues = data
+    ? (data[0] || data || []).reduce((result, item) => {
+        if (item.id && !result.find(r => r.id === item.id)) {
+          result.push({...item});
+        }
+        return result;
+      }, [])
+    : [];
   const isLoading = !data && !error;
   const isRefreshing = !!(isValidating && data && issues.length === size);
 
-  console.log(issues, data.length, size, 'size');
+  // console.log(issues, data.length, size, 'size');
 
   return {
     data: issues,
@@ -541,7 +544,7 @@ export const useInspectionTemplate = () => {
   const {data, mutate} = useSWR(`inspectionTemplate`, async () => {
     try {
       const res = await AsyncStorage.getItem('inspectionTemplate');
-      return res ? JSON.parse(res) : {};
+      return JSON.parse(res || '{}');
     } catch (error) {
       return {};
     }

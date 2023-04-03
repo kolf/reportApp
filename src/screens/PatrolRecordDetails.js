@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ScrollView} from 'react-native';
-import {Text} from 'react-native-ui-lib';
+import {Text,View} from 'react-native-ui-lib';
 import {FormList, FormItem, Loading, ImagePicker} from '../components';
 import {useInspection} from '../hooks/useData';
 import {joinUrl} from '../lib/upload';
@@ -16,6 +16,7 @@ export const PatrolRecordDetails = React.memo(({route}) => {
 
   return (
     <ScrollView style={{flex: 1}}>
+      <View style={{paddingTop: 12}} />
       <FormList>
         <FormItem label="监测时间">
           <Text text16>{data.createTime}</Text>

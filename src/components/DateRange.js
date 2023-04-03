@@ -31,35 +31,39 @@ export const DateRange = ({onChange, style}) => {
   };
 
   return (
-    <View style={styles.root} row>
-      <DateTimePicker
-        {...dateProps}
-        // style={styles.date}
-        placeholder="开始时间"
-        onChange={value => handleChange(0, value)}
-      />
+    <View style={styles.root} row center>
+      <View flex center>
+        <DateTimePicker
+          {...dateProps}
+          placeholder="开始时间"
+          onChange={value => handleChange(0, value)}
+        />
+      </View>
       <View style={{width: 20}}>
         <Text style={{textAlign: 'center'}}>-</Text>
       </View>
-      <DateTimePicker
-        {...dateProps}
-        // style={styles.date}
-        placeholder="结束时间"
-        onChange={value => handleChange(1, value)}
-      />
+      <View flex center>
+        <DateTimePicker
+          {...dateProps}
+          style={styles.date}
+          placeholder="结束时间"
+          onChange={value => handleChange(1, value)}
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
-    // backgroundColor: Colors.error,
-    // width: '100%',
+    backgroundColor: Colors.white,
+    width: '100%',
     borderWidth: 1,
     borderColor: Colors.border,
     height: 30,
   },
   date: {
-    flex: 1,
+    // flex: 1,
+    // textAlign: 'center',
   },
 });

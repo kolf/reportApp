@@ -35,8 +35,8 @@ const makeQuery = values => {
     if (value) {
       if (key === 'date' && value.length > 0) {
         const [startDate, endDate] = value;
-        result.startMonitorTime = startDate;
-        result.endMonitorTime = endDate;
+        result.startTime = startDate;
+        result.endTime = endDate;
       } else if (typeof value === 'object') {
         result[key] = value.value === '0' ? undefined : value.value;
       } else {
@@ -48,12 +48,12 @@ const makeQuery = values => {
   }, {});
 };
 
-export const PatrolRecordScreen = React.memo(({navigation}) => {
+export const PatrolRecordScreen = ({navigation}) => {
   const [query, setQuery] = React.useState({
-    // district: '',
-    // bugId: '',
-    // startMonitorTime: '',
-    // endMonitorTime: ''
+    name: '',
+    bugId: '',
+    startTime: '',
+    endTime: '',
   });
 
   const {data, setSize, size, isRefreshing, onRefresh} = useInspectionList(
@@ -70,7 +70,7 @@ export const PatrolRecordScreen = React.memo(({navigation}) => {
     return data.map((item, index) => {
       return {
         ...item,
-        key: item.id + '-' + index,
+        key: item.id,
         index: index + 1,
       };
     });
@@ -101,7 +101,7 @@ export const PatrolRecordScreen = React.memo(({navigation}) => {
         <Picker
           placeholder="请选择区域"
           options={[defaultOption, ...districtRange]}
-          name="district"
+          name="name"
         />
         <DateRange name="date" width="70%" />
       </InlineForm>
@@ -120,7 +120,7 @@ export const PatrolRecordScreen = React.memo(({navigation}) => {
       />
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   root: {
