@@ -1,16 +1,14 @@
 import * as React from 'react';
 import {MapView, Marker, MapType} from 'react-native-amap3d';
-import {init, Geolocation} from 'react-native-amap-geolocation';
-import {
-  PermissionsAndroid,
-  Platform,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import {SearchBar, LoadingModal, Empty} from '../components';
+import {Geolocation} from 'react-native-amap-geolocation';
+import {StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import {SearchBar, Empty} from '../components';
 import {View, Icon, Text} from 'react-native-ui-lib';
-import {usePlaceSearch, useInspectionTemplate} from '../hooks/useData';
+import {
+  usePlaceSearch,
+  useInspectionTemplate,
+  useCurrentLocation,
+} from '../hooks/useData';
 import {Colors} from '../config';
 
 const renderItem = ({index, item, onClick}) => {
@@ -60,34 +58,49 @@ const FloatButton = ({icon, style, total, onPress}) => {
 export const MapPlaceSearch = ({navigation}) => {
   const mapRef = React.useRef(null);
   const [currentPosition, setCurrentPosition] = React.useState();
-  const [mapLoading, setMapLoading] = React.useState(true);
+  const {run: getCurrentLocation} = useCurrentLocation();
   const [value, setValue] = React.useState('');
   const [placeholder, setPlaceholder] = React.useState('');
   const {update, data: inspectionTemplate} = useInspectionTemplate();
   const {data} = usePlaceSearch(value);
 
   const handleClick = async data => {
-    // console.log(data, 'data');
-    await update({...inspectionTemplate, _address: data});
+    console.log(data, 'data');
+    const [longitude, latitude] = data.location.split(',');
+
+    await update({
+      ...inspectionTemplate,
+      _address: {
+        fullAddress: data.fullAddress,
+        name: data.name,
+        longitude,
+        latitude,
+      },
+    });
     navigation.navigate('CreatePatrolRecord');
     // console.log(data, 'data');
   };
 
-  const updateCurrentPosition = React.useCallback(callback => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const {longitude, latitude, name} = position.coords;
-        console.log(position, 'position');
-        setCurrentPosition({longitude, latitude});
-        setPlaceholder(name);
-        callback && callback({longitude, latitude});
-      },
-      () => {
-        callback && callback();
-      },
-      {enableHighAccuracy: false, timeout: 20000, maximumAge: 100000},
-    );
-  }, []);
+  const handleCurrentLocation = async () => {
+    try {
+      const res = await getCurrentLocation();
+      console.log(res, 'res');
+      const {longitude, latitude, poiName} = res.location;
+      setCurrentPosition({longitude, latitude});
+      setPlaceholder(poiName);
+
+      mapRef.current.moveCamera(
+        {
+          tilt: 0,
+          bearing: 0,
+          zoom: 16,
+          longitude,
+          latitude,
+        },
+        1000,
+      );
+    } catch (error) {}
+  };
 
   const handleSearch = value => {
     const nextValue = value || placeholder;
@@ -96,39 +109,10 @@ export const MapPlaceSearch = ({navigation}) => {
   };
 
   React.useEffect(() => {
-    const run = async () => {
-      if (Platform.OS == 'android') {
-        try {
-          await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-          ]);
-          await init({
-            ios: '97986f37560fe9742f02aac3ac43922b',
-            android: '97986f37560fe9742f02aac3ac43922b',
-          });
-
-          updateCurrentPosition();
-        } catch (error) {
-          // console.error(error)
-        }
-        setMapLoading(false);
-      }
-
-      if (inspectionTemplate && inspectionTemplate._address) {
-        setPlaceholder(inspectionTemplate._address.name);
-      }
-
-      //   mapRef.current.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], () => {
-      //     console.log('11');
-      //   });
-    };
-
-    run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [init, inspectionTemplate]);
-
-  //   console.log(data, 'data');
+    if (inspectionTemplate._address) {
+      setPlaceholder(inspectionTemplate._address.name);
+    }
+  }, [inspectionTemplate]);
 
   return (
     <View style={styles.root}>
@@ -157,20 +141,7 @@ export const MapPlaceSearch = ({navigation}) => {
         <FloatButton
           style={{marginTop: 8}}
           icon="findMe"
-          onPress={() => {
-            updateCurrentPosition(position => {
-              const target = position || currentPosition;
-              mapRef.current.moveCamera(
-                {
-                  tilt: 0,
-                  bearing: 0,
-                  zoom: 16,
-                  target,
-                },
-                1000,
-              );
-            });
-          }}
+          onPress={handleCurrentLocation}
         />
       </View>
       <MapView

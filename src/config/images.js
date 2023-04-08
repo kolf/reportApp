@@ -33,4 +33,5 @@ export const Icons = {
   'eye-off': require('../assets/eye-off.png'),
   address: require('../assets/address.png'),
   close: require('../assets/close.png'),
+  location: require('../assets/location.png'),
 };

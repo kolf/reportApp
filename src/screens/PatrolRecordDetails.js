@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ScrollView} from 'react-native';
-import {Text,View} from 'react-native-ui-lib';
+import {Text, View} from 'react-native-ui-lib';
 import {FormList, FormItem, Loading, ImagePicker} from '../components';
 import {useInspection} from '../hooks/useData';
 import {joinUrl} from '../lib/upload';
@@ -48,18 +48,16 @@ export const PatrolRecordDetails = React.memo(({route}) => {
         <FormItem label="地块性质">
           <Text text16>{data.plotNature}</Text>
         </FormItem>
-        <FormItem label="图片">
-          <ImagePicker
-            showAddBtn={false}
-            files={
-              data.imgUrl
-                ? joinUrl(data.imgUrl.split(',')).map(item => ({
-                    url: item,
-                  }))
-                : []
-            }
-          />
-        </FormItem>
+        {data.imgUrl && (
+          <FormItem label="图片">
+            <ImagePicker
+              showAddBtn={false}
+              files={joinUrl(data.imgUrl.split(',')).map(item => ({
+                url: item,
+              }))}
+            />
+          </FormItem>
+        )}
 
         <FormItem label="备注">
           <Text text16>{data.remarks}</Text>

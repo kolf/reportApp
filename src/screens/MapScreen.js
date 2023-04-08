@@ -93,8 +93,6 @@ export const MapScreen = React.memo(({navigation}) => {
     isValidating,
   } = useTemplateFixedPoint();
 
-  // console.log(userTemplateLoading, 'userTemplateLoading')
-
   React.useEffect(() => {
     // 刷新地图marker
     const run = async () => {
@@ -141,11 +139,13 @@ export const MapScreen = React.memo(({navigation}) => {
     };
 
     run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateCurrentPosition = React.useCallback(callback => {
     Geolocation.getCurrentPosition(
       position => {
+        console.log(position, 'position');
         const {longitude, latitude} = position.coords;
         setCurrentPosition({longitude, latitude});
         callback && callback({longitude, latitude});

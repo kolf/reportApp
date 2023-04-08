@@ -1,6 +1,13 @@
 import * as React from 'react';
 import {ScrollView, Alert, TouchableOpacity} from 'react-native';
-import {View, NumberInput, Button, Incubator, Text} from 'react-native-ui-lib';
+import {
+  View,
+  NumberInput,
+  Button,
+  Incubator,
+  Text,
+  Icon,
+} from 'react-native-ui-lib';
 import {
   FormList,
   FormItem,
@@ -15,11 +22,13 @@ import {
   useBugCategory,
   updateInspection,
   useInspectionTemplate,
+  useCurrentLocation,
 } from '../hooks/useData';
 import {Colors} from '../config';
 
 export const CreatePatrolRecord = React.memo(({route, navigation}) => {
   const {auth} = React.useContext(AuthenticatedUserContext);
+  const {run: getCurrentLocation} = useCurrentLocation();
   const {update, data: inspectionTemplate, remove} = useInspectionTemplate();
   const {data: bugCategoryRange = []} = useBugCategory();
   const {data: districtRange = []} = useDistrict();
@@ -33,18 +42,14 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
     if (!data) {
       return {};
     }
-    const [longitude, latitude] =
-      (inspectionTemplate &&
-        inspectionTemplate._address &&
-        inspectionTemplate._address.location.split(',')) ||
-      [];
+    const {longitude, latitude, fullAddress} = data._address || {};
 
     return {
       ...data,
       longitude,
       latitude,
       createTime: recordTimeRef.current,
-      address: inspectionTemplate && inspectionTemplate._address?.fullAddress,
+      address: fullAddress,
       treeNum: data.treeNum && data.treeNum.number,
       imgUrl: data.imgUrl && data.imgUrl.map(file => file.httpUrl).join(','),
       bugName:
@@ -84,6 +89,29 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
     navigation.navigate('MapPlaceSearch');
   };
 
+  const handleLocation = async () => {
+    try {
+      const res = await getCurrentLocation();
+      const {location} = res;
+
+      console.log(res, 'location');
+
+      if (location && location.address) {
+        setFormData({
+          ...formData,
+          _address: {
+            fullAddress: location.address,
+            name: location.poiName,
+            longitude: location.longitude,
+            latitude: location.latitude,
+          },
+        });
+      }
+
+      // console.log(res, 'res');
+    } catch (error) {}
+  };
+
   React.useEffect(() => {
     if (inspectionTemplate) {
       setFormData({
@@ -99,7 +127,7 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
 
   return (
     <ScrollView style={{flex: 1}}>
-      <FormList>
+      <FormList marginT-12>
         <FormItem label="监测时间">
           <CountDown onChange={recordTimeChange} />
         </FormItem>
@@ -118,15 +146,24 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
         </FormItem>
 
         <FormItem label="问题位置描述" required onClick={handleAddress}>
-          <TouchableOpacity
-            onPress={handleAddress}
-            style={{paddingVertical: 12, paddingRight: 12}}>
-            {inspectionTemplate && inspectionTemplate._address ? (
-              <Text>{inspectionTemplate._address.fullAddress}</Text>
-            ) : (
-              <Text color="#ccc">请选择</Text>
-            )}
-          </TouchableOpacity>
+          <View row centerV>
+            <View flex paddingR-6>
+              <TouchableOpacity
+                onPress={handleAddress}
+                style={{paddingVertical: 12}}>
+                {formData._address ? (
+                  <Text>{formData._address.fullAddress}</Text>
+                ) : (
+                  <Text color="#ccc">请选择</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+            <View width={40}>
+              <TouchableOpacity onPress={handleLocation}>
+                <Icon assetGroup="icons" assetName="location" size={18} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </FormItem>
 
         <FormItem label="涉及虫种" required>
@@ -184,10 +221,10 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
 
         <FormItem label="备注">
           <Incubator.TextField
-            value={formData.remark}
+            value={formData.remarks}
             placeholder="请输入"
             maxLength={200}
-            onChangeText={value => handleChange('remark', value)}
+            onChangeText={value => handleChange('remarks', value)}
           />
         </FormItem>
       </FormList>

@@ -32,6 +32,7 @@ const defaultOption = {
 const makeQuery = values => {
   return Object.entries(values).reduce((result, item) => {
     const [key, value] = item;
+    console.log(key, value, 'key, value');
     if (value) {
       if (key === 'date' && value.length > 0) {
         const [startDate, endDate] = value;
@@ -51,7 +52,7 @@ const makeQuery = values => {
 export const PatrolRecordScreen = ({navigation}) => {
   const [query, setQuery] = React.useState({
     name: '',
-    bugId: '',
+    bugName: '',
     startTime: '',
     endTime: '',
   });
@@ -95,8 +96,11 @@ export const PatrolRecordScreen = ({navigation}) => {
       <InlineForm onChange={onFilter}>
         <Picker
           placeholder="请选择虫害"
-          options={[defaultOption, ...bugCategoryRange]}
-          name="bugId"
+          options={[
+            defaultOption,
+            ...bugCategoryRange.map(o => ({label: o.label, value: o.label})),
+          ]}
+          name="bugName"
         />
         <Picker
           placeholder="请选择区域"
