@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {init, Geolocation} from 'react-native-amap-geolocation';
+import AMapGeolocation from '@uiw/react-native-amap-geolocation';
+
 import * as React from 'react';
 import {PermissionsAndroid, Platform, Alert} from 'react-native';
 import useSWR, {useSWRConfig} from 'swr';
@@ -12,6 +13,7 @@ import {uploadList} from '../lib/upload';
 import {makeTableAvg, makeTableSum} from '../lib/makeData';
 
 const PAGE_SIZE = 16;
+const API_KEY = '97986f37560fe9742f02aac3ac43922b';
 
 export const useInfiniteTemplate = params => {
   const {data, error, mutate, size, setSize, isValidating} = useSWRInfinite(
@@ -519,46 +521,41 @@ export const getCurrentLocation = keywords => {
 export const useCurrentLocation = () => {
   const [loading, setLoading] = React.useState(true);
 
-  const run = React.useCallback(
-    () =>
-      new Promise((resolve, reject) => {
-        Geolocation.getCurrentPosition(
-          resolve,
-          error => {
-            Alert.alert(null, `获取当前位置失败，请稍候再试`);
-            reject(error);
-          },
-          {
-            enableHighAccuracy: false,
-            timeout: 20000,
-            maximumAge: 100000,
-          },
-        );
-      }),
-    [],
-  );
+  const run = async () => {
+    try {
+      const json = await AMapGeolocation.getCurrentLocation();
+      console.log('json:', json);
+      if (!json) {
+        throw new Error(`获取当前位置失败，请稍候再试`);
+      }
+      return json;
+    } catch (error) {
+      Alert.alert(null, error.message);
+      return Promise.reject(error);
+      // console.log('error:', error);
+    }
+  };
 
   React.useEffect(() => {
     const run = async () => {
       setLoading(true);
+
       if (Platform.OS == 'android') {
         try {
           await PermissionsAndroid.requestMultiple([
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
           ]);
-          await init({
-            ios: '97986f37560fe9742f02aac3ac43922b',
-            android: '97986f37560fe9742f02aac3ac43922b',
-          });
         } catch (error) {}
       }
+      AMapGeolocation.setApiKey(API_KEY);
+      AMapGeolocation.setLocationMode(1);
       setLoading(false);
     };
 
     run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [PermissionsAndroid]);
 
   return {
     loading,

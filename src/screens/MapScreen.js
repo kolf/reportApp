@@ -1,13 +1,8 @@
 import * as React from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import {useSWRConfig} from 'swr';
 import {MapView, Marker, MapType, Cluster} from 'react-native-amap3d';
-import {init, Geolocation} from 'react-native-amap-geolocation';
+
 import {
   View,
   Text,
@@ -26,6 +21,7 @@ import {
   useTemplateFixedPoint,
   useHomeData,
   useUserTemplateList,
+  useCurrentLocation,
 } from '../hooks/useData';
 
 const CustomMarker = React.memo(({name}) => {
@@ -79,9 +75,10 @@ export const MapScreen = React.memo(({navigation}) => {
   const mapRef = React.useRef(null);
   const statusRef = React.useRef(null);
   const clusterRef = React.useRef(null);
-  const [mapLoading, setMapLoading] = React.useState(true);
   const [showMenu, setShowMenu] = React.useState(false);
   const [coverage, setCoverage] = React.useState(false);
+  const {run: getCurrentLocation, loading: mapLoading} = useCurrentLocation();
+
   const [currentPosition, setCurrentPosition] = React.useState();
   const [currentMarker, setCurrentMarker] = React.useState(null);
   const {data} = useHomeData();
@@ -111,51 +108,35 @@ export const MapScreen = React.memo(({navigation}) => {
 
   React.useEffect(() => {
     if (data.positions && data.positions.length > 0) {
-      mapRef.current?.moveCamera(
-        {zoom: 11, target: {latitude: 39.80884722, longitude: 116.7749056}},
-        500,
-      );
+      const timer = setTimeout(() => {
+        clearTimeout(timer);
+        mapRef.current?.moveCamera(
+          {zoom: 11, target: {latitude: 39.80884722, longitude: 116.7749056}},
+          500,
+        );
+      }, 300);
     }
   }, [data.positions]);
 
-  React.useEffect(() => {
-    const run = async () => {
-      if (Platform.OS == 'android') {
-        try {
-          await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-          ]);
-          await init({
-            ios: '97986f37560fe9742f02aac3ac43922b',
-            android: '97986f37560fe9742f02aac3ac43922b',
-          });
-          updateCurrentPosition();
-        } catch (error) {
-          // console.error(error)
-        }
-      }
-      setMapLoading(false);
-    };
+  const handleCurrentLocation = async () => {
+    try {
+      const res = await getCurrentLocation();
+      // console.log(res, 'res');
+      const {longitude, latitude} = res;
+      setCurrentPosition({longitude, latitude});
+      // setPlaceholder(poiName || address);
 
-    run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const updateCurrentPosition = React.useCallback(callback => {
-    Geolocation.getCurrentPosition(
-      position => {
-        console.log(position, 'position');
-        const {longitude, latitude} = position.coords;
-        setCurrentPosition({longitude, latitude});
-        callback && callback({longitude, latitude});
-      },
-      error => {
-        callback && callback();
-      },
-      {enableHighAccuracy: false, timeout: 20000, maximumAge: 100000},
-    );
-  }, []);
+      mapRef.current.moveCamera(
+        {
+          tilt: 0,
+          bearing: 0,
+          zoom: 16,
+          target: {longitude, latitude},
+        },
+        1000,
+      );
+    } catch (error) {}
+  };
 
   const handleSearch = React.useCallback(
     value => {
@@ -316,20 +297,7 @@ export const MapScreen = React.memo(({navigation}) => {
           <FloatButton
             style={{marginTop: 8}}
             icon="findMe"
-            onPress={() => {
-              updateCurrentPosition(position => {
-                const target = position || currentPosition;
-                mapRef.current.moveCamera(
-                  {
-                    tilt: 0,
-                    bearing: 0,
-                    zoom: 16,
-                    target,
-                  },
-                  1000,
-                );
-              });
-            }}
+            onPress={handleCurrentLocation}
           />
         </View>
         <MapView

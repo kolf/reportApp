@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {MapView, Marker, MapType} from 'react-native-amap3d';
-import {Geolocation} from 'react-native-amap-geolocation';
 import {StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {SearchBar, Empty} from '../components';
 import {View, Icon, Text} from 'react-native-ui-lib';
@@ -84,18 +83,20 @@ export const MapPlaceSearch = ({navigation}) => {
   const handleCurrentLocation = async () => {
     try {
       const res = await getCurrentLocation();
-      console.log(res, 'res');
-      const {longitude, latitude, poiName} = res.location;
+      // console.log(res, 'res');
+      const {longitude, latitude, poiName, address} = res;
       setCurrentPosition({longitude, latitude});
-      setPlaceholder(poiName);
+      setPlaceholder(poiName || address);
 
       mapRef.current.moveCamera(
         {
           tilt: 0,
           bearing: 0,
           zoom: 16,
-          longitude,
-          latitude,
+          target: {
+            longitude,
+            latitude,
+          },
         },
         1000,
       );
