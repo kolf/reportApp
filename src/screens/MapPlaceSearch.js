@@ -6,7 +6,7 @@ import {View, Icon, Text} from 'react-native-ui-lib';
 import {
   usePlaceSearch,
   useInspectionTemplate,
-  useCurrentLocation,
+  useAMapGeolocation,
 } from '../hooks/useData';
 import {Colors} from '../config';
 
@@ -57,7 +57,7 @@ const FloatButton = ({icon, style, total, onPress}) => {
 export const MapPlaceSearch = ({navigation}) => {
   const mapRef = React.useRef(null);
   const [currentPosition, setCurrentPosition] = React.useState();
-  const {run: getCurrentLocation} = useCurrentLocation();
+  const aMapGeolocation = useAMapGeolocation();
   const [value, setValue] = React.useState('');
   const [placeholder, setPlaceholder] = React.useState('');
   const {update, data: inspectionTemplate} = useInspectionTemplate();
@@ -80,14 +80,11 @@ export const MapPlaceSearch = ({navigation}) => {
     // console.log(data, 'data');
   };
 
-  const handleCurrentLocation = async () => {
-    try {
-      const res = await getCurrentLocation();
-      // console.log(res, 'res');
-      const {longitude, latitude, poiName, address} = res;
+  React.useEffect(() => {
+    if (aMapGeolocation.data) {
+      const {longitude, latitude, poiName, address} = aMapGeolocation.data;
       setCurrentPosition({longitude, latitude});
       setPlaceholder(poiName || address);
-
       mapRef.current.moveCamera(
         {
           tilt: 0,
@@ -100,8 +97,31 @@ export const MapPlaceSearch = ({navigation}) => {
         },
         1000,
       );
-    } catch (error) {}
-  };
+    }
+  }, [aMapGeolocation.data]);
+
+  // const handleCurrentLocation = async () => {
+  // try {
+  //   const res = await getCurrentLocation();
+  //   // console.log(res, 'res');
+  //   const {longitude, latitude, poiName, address} = res;
+  //   setCurrentPosition({longitude, latitude});
+  //   setPlaceholder(poiName || address);
+
+  //   mapRef.current.moveCamera(
+  //     {
+  //       tilt: 0,
+  //       bearing: 0,
+  //       zoom: 16,
+  //       target: {
+  //         longitude,
+  //         latitude,
+  //       },
+  //     },
+  //     1000,
+  //   );
+  // } catch (error) {}
+  // };
 
   const handleSearch = value => {
     const nextValue = value || placeholder;
@@ -142,7 +162,7 @@ export const MapPlaceSearch = ({navigation}) => {
         <FloatButton
           style={{marginTop: 8}}
           icon="findMe"
-          onPress={handleCurrentLocation}
+          onPress={aMapGeolocation.start}
         />
       </View>
       <MapView

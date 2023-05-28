@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import {ScrollView, Alert, TouchableOpacity} from 'react-native';
 import {
@@ -22,13 +23,13 @@ import {
   useBugCategory,
   updateInspection,
   useInspectionTemplate,
-  useCurrentLocation,
+  useAMapGeolocation,
 } from '../hooks/useData';
 import {Colors} from '../config';
 
 export const CreatePatrolRecord = React.memo(({route, navigation}) => {
   const {auth} = React.useContext(AuthenticatedUserContext);
-  const {run: getCurrentLocation} = useCurrentLocation();
+  const aMapGeolocation = useAMapGeolocation();
   const {update, data: inspectionTemplate, remove} = useInspectionTemplate();
   const {data: bugCategoryRange = []} = useBugCategory();
   const {data: districtRange = []} = useDistrict();
@@ -62,7 +63,7 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
     setConfirmLoading(true);
     try {
       await auth();
-      const res = updateInspection(makeParams(formData));
+      updateInspection(makeParams(formData));
       await remove();
     } catch (error) {
       Alert.alert(
@@ -89,28 +90,42 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
     navigation.navigate('MapPlaceSearch');
   };
 
-  const handleLocation = async () => {
-    try {
-      const res = await getCurrentLocation();
-      const {location} = res;
+  // const handleLocation = async () => {
+  //   try {
+  //     const res = await getCurrentLocation();
+  //     const {location} = res;
 
-      console.log(res, 'location');
+  //     console.log(res, 'location');
 
-      if (location && location.address) {
-        setFormData({
-          ...formData,
-          _address: {
-            fullAddress: location.address,
-            name: location.poiName,
-            longitude: location.longitude,
-            latitude: location.latitude,
-          },
-        });
-      }
+  //     if (location && location.address) {
+  //       setFormData({
+  //         ...formData,
+  //         _address: {
+  //           fullAddress: location.address,
+  //           name: location.poiName,
+  //           longitude: location.longitude,
+  //           latitude: location.latitude,
+  //         },
+  //       });
+  //     }
 
-      // console.log(res, 'res');
-    } catch (error) {}
-  };
+  //     // console.log(res, 'res');
+  //   } catch (error) {}
+  // };
+  React.useEffect(() => {
+    if (aMapGeolocation.data) {
+      const {address, poiName, longitude, latitude} = aMapGeolocation.data;
+      setFormData({
+        ...formData,
+        _address: {
+          fullAddress: address,
+          name: poiName,
+          longitude: longitude,
+          latitude: latitude,
+        },
+      });
+    }
+  }, [aMapGeolocation.data]);
 
   React.useEffect(() => {
     if (inspectionTemplate) {
@@ -159,7 +174,7 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
               </TouchableOpacity>
             </View>
             <View width={40}>
-              <TouchableOpacity onPress={handleLocation}>
+              <TouchableOpacity onPress={aMapGeolocation.start}>
                 <Icon assetGroup="icons" assetName="location" size={18} />
               </TouchableOpacity>
             </View>

@@ -21,7 +21,7 @@ import {
   useTemplateFixedPoint,
   useHomeData,
   useUserTemplateList,
-  useCurrentLocation,
+  useAMapGeolocation,
 } from '../hooks/useData';
 
 const CustomMarker = React.memo(({name}) => {
@@ -77,7 +77,7 @@ export const MapScreen = React.memo(({navigation}) => {
   const clusterRef = React.useRef(null);
   const [showMenu, setShowMenu] = React.useState(false);
   const [coverage, setCoverage] = React.useState(false);
-  const {run: getCurrentLocation, loading: mapLoading} = useCurrentLocation();
+  const aMapGeolocation = useAMapGeolocation();
 
   const [currentPosition, setCurrentPosition] = React.useState();
   const [currentMarker, setCurrentMarker] = React.useState(null);
@@ -118,14 +118,10 @@ export const MapScreen = React.memo(({navigation}) => {
     }
   }, [data.positions]);
 
-  const handleCurrentLocation = async () => {
-    try {
-      const res = await getCurrentLocation();
-      // console.log(res, 'res');
-      const {longitude, latitude} = res;
+  React.useEffect(() => {
+    if (aMapGeolocation.data) {
+      const {longitude, latitude} = aMapGeolocation.data;
       setCurrentPosition({longitude, latitude});
-      // setPlaceholder(poiName || address);
-
       mapRef.current.moveCamera(
         {
           tilt: 0,
@@ -135,8 +131,8 @@ export const MapScreen = React.memo(({navigation}) => {
         },
         1000,
       );
-    } catch (error) {}
-  };
+    }
+  }, [aMapGeolocation.data]);
 
   const handleSearch = React.useCallback(
     value => {
@@ -297,7 +293,7 @@ export const MapScreen = React.memo(({navigation}) => {
           <FloatButton
             style={{marginTop: 8}}
             icon="findMe"
-            onPress={handleCurrentLocation}
+            onPress={aMapGeolocation.start}
           />
         </View>
         <MapView
@@ -360,7 +356,7 @@ export const MapScreen = React.memo(({navigation}) => {
           setCurrentMarker(null);
         }}
       />
-      <LoadingModal loading={mapLoading} size={80} color={Colors.success} />
+      <LoadingModal size={80} color={Colors.success} />
     </View>
   );
 });

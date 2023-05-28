@@ -24,3 +24,4 @@ export const API_ROOT = {
 };
 export const itemId = 10001;
 export const typeId = 8202;
+export const API_KEY = '97986f37560fe9742f02aac3ac43922b';

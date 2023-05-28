@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {SWRConfig} from 'swr';
-import {AppState, StatusBar} from 'react-native';
+import {AppState, StatusBar, Platform, PermissionsAndroid} from 'react-native';
 import {AMapSdk} from 'react-native-amap3d';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootNavigator} from './navigation/RootNavigator';
 import {Colors, Typography, Assets, ThemeManager} from 'react-native-ui-lib';
 import {AuthenticatedUserProvider} from './providers';
+import {API_KEY} from './config/apis';
 import {
   Colors as colors,
   Typography as typography,
@@ -29,10 +30,17 @@ const App = () => {
   React.useEffect(() => {
     const loaderCache = async () => {
       try {
+        if (Platform.OS == 'android') {
+          await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          ]);
+        }
+
         await AMapSdk.init(
           Platform.select({
-            android: '97986f37560fe9742f02aac3ac43922b',
-            ios: '97986f37560fe9742f02aac3ac43922b',
+            android: API_KEY,
+            ios: API_KEY,
           }),
         );
 

@@ -518,48 +518,29 @@ export const getCurrentLocation = keywords => {
   });
 };
 
-export const useCurrentLocation = () => {
-  const [loading, setLoading] = React.useState(true);
-
-  const run = async () => {
-    try {
-      const json = await AMapGeolocation.getCurrentLocation();
-      console.log('json:', json);
-      if (!json) {
-        throw new Error(`获取当前位置失败，请稍候再试`);
-      }
-      return json;
-    } catch (error) {
-      Alert.alert(null, error.message);
-      return Promise.reject(error);
-      // console.log('error:', error);
-    }
-  };
-
+export const useAMapGeolocation = () => {
+  const [data, setData] = React.useState(null);
   React.useEffect(() => {
     const run = async () => {
-      setLoading(true);
-
-      if (Platform.OS == 'android') {
-        try {
-          await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-          ]);
-        } catch (error) {}
-      }
       AMapGeolocation.setApiKey(API_KEY);
       AMapGeolocation.setLocationMode(1);
-      setLoading(false);
+      AMapGeolocation.addLocationListener(res => {
+        if (res) {
+          setData(res);
+          AMapGeolocation.stop();
+        }
+        console.log('返回定位信息', res);
+      });
     };
 
     run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [PermissionsAndroid]);
+  }, []);
 
   return {
-    loading,
-    run,
+    start: AMapGeolocation.start,
+    stop: AMapGeolocation.stop,
+    data,
   };
 };
 
