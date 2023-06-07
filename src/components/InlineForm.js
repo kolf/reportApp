@@ -1,11 +1,4 @@
-/*
- * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @Date: 2022-04-17 09:41:04
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-03-18 23:32:09
- * @FilePath: /reportApp/src/components/InlineForm.js
- * @Description: 
- */
+
 import * as React from 'react';
 import {StyleSheet} from 'react-native';
 import {Text, View, Button} from 'react-native-ui-lib';
