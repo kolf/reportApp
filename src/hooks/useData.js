@@ -344,6 +344,26 @@ export const usePosition = id => {
   );
 };
 
+/**
+ * @description: 地块性质下拉框接口
+ */
+export const usePlotNature = () => {
+  return useRequest(
+      `/api/bjtzh/pest/bug/inspection/plotNature`,
+      null,
+  );
+};
+
+/**
+ * @description: 外来入侵生物下拉框接口
+ */
+export const useSpecies = () => {
+  return useRequest(
+      `/api/bjtzh/pest/bug/inspection/species`,
+      null,
+  );
+};
+
 export const useTemplateFixedPoint = () => {
   return useRequest(
     `/api/bjtzh/pest/device/template/templateFixedPointDetailInfo`,
