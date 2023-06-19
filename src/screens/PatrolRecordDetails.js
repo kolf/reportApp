@@ -9,7 +9,7 @@ export const PatrolRecordDetails = React.memo(({route}) => {
   const {params} = route;
   const {data, loading} = useInspection(params);
 
-  console.log(data, 'data');
+  // console.log(data, 'data');
   if (loading) {
     return <Loading />;
   }
@@ -47,6 +47,9 @@ export const PatrolRecordDetails = React.memo(({route}) => {
 
         <FormItem label="地块性质">
           <Text text16>{data.plotNature}</Text>
+        </FormItem>
+        <FormItem label="外来生物入侵">
+          <Text text16>{data.species}</Text>
         </FormItem>
         {data.imgUrl && (
           <FormItem label="图片">

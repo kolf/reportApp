@@ -30,7 +30,7 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
     });
     const [confirmLoading, setConfirmLoading] = React.useState(false);
 
-    console.log(plotNatureRange, speciesRange, 'plotNatureRange,speciesRange')
+    console.log(plotNatureRange, bugCategoryRange, 'plotNatureRange,speciesRange111')
 
     const makeParams = data => {
         if (!data) {
@@ -191,13 +191,13 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
                 </FormItem>
 
                 <FormItem label="地块性质" required>
-                    {bugCategoryRange && (
+                    {plotNatureRange && (
                         <Picker
                             height={50}
                             unstyle
                             placeholder="请选择"
                             value={formData.plotNature}
-                            options={bugCategoryRange}
+                            options={plotNatureRange}
                             name="plotNature"
                             onChange={value => handleChange('plotNature', value)}
                         />
@@ -205,13 +205,13 @@ export const CreatePatrolRecord = React.memo(({route, navigation}) => {
                 </FormItem>
 
                 <FormItem label="外来生物入侵" required>
-                    {bugCategoryRange && (
+                    {speciesRange && (
                         <Picker
                             height={50}
                             unstyle
                             placeholder="请选择"
                             value={formData.species}
-                            options={bugCategoryRange}
+                            options={speciesRange}
                             name="species"
                             onChange={value => handleChange('species', value)}
                         />
